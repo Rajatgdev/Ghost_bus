@@ -171,3 +171,6 @@ button, input { font: inherit; color: inherit; }
   .fu-table th:nth-child(3), .fu-table td:nth-child(3), .fu-table th:nth-child(4), .fu-table td:nth-child(4) { display: none; }
   .fu-table td, .fu-table th, .past-table td, .past-table th { padding-left: 14px; padding-right: 10px; }
 }
+.fu-note { margin: 0 18px 14px; font-size: 13px; color: var(--ink-2); max-width: 80ch; }
+.fu-table tr.warn td:last-child .state { color: var(--warn); font-weight: 600; }
+.fu-table .why { max-width: 60ch; }

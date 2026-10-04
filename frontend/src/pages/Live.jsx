@@ -6,7 +6,7 @@ import StatusBanner, { fmtClock } from "../components/StatusBanner.jsx";
 import FlaggedMap from "../components/FlaggedMap.jsx";
 import FollowUp from "../components/FollowUp.jsx";
 import PastChecks from "../components/PastChecks.jsx";
-import { loadChecks, saveCheck, clearChecks } from "../lib/history.js";
+import { loadChecks, saveCheck, clearChecks, loadLog, appendLog, clearLog } from "../lib/history.js";
 
 // Wording rule: we report what the feed shows, never why. "No vehicle reporting", not "cancelled".
 const TRIP = {
@@ -59,6 +59,7 @@ function routeStatus(g) {
 export default function Live() {
   const [mode, setMode] = useState(new URLSearchParams(location.search).has("replay") ? "past" : "live");
   const [checks, setChecks] = useState(loadChecks);
+  const [log, setLog] = useState(loadLog);
   const [pastSel, setPastSel] = useState(null); // null = list, "sample", or a saved check's as_of
   const [liveBundle, setLiveBundle] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -80,6 +81,7 @@ export default function Live() {
       const res = await runCycle();
       setLiveBundle(res);
       setChecks((l) => saveCheck(l, res));
+      setLog((l) => appendLog(l, res));
       setNow(Date.now());
     } catch (e) {
       setError(e.message || "failed");
@@ -148,7 +150,7 @@ export default function Live() {
           <PastChecks checks={checks}
             onOpen={(id) => setPastSel(id)}
             onOpenSample={() => setPastSel("sample")}
-            onClear={() => { if (confirm("Clear all past checks saved in this browser?")) setChecks(clearChecks()); }} />
+            onClear={() => { if (confirm("Clear all past checks saved in this browser?")) { setChecks(clearChecks()); setLog(clearLog()); } }} />
         )}
         {mode === "past" && pastSel && (
           <button className="back" onClick={() => setPastSel(null)}><ArrowLeft size={15} aria-hidden="true" /> All past checks</button>
@@ -209,7 +211,7 @@ export default function Live() {
 
             {healthy && <FlaggedMap assessments={bundle.assessments || []} onPick={pick} />}
 
-            {mode === "live" && <FollowUp checks={checks} />}
+            {mode === "live" && <FollowUp log={log} />}
 
             {healthy && (
               <section className="board" aria-label="Routes">
