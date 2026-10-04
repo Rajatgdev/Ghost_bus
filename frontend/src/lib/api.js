@@ -19,3 +19,5 @@ async function req(path, opts = {}) {
 
 export const getCohorts = () => req("/api/cohorts");
 export const runCycle = () => req("/api/cycle", { method: "POST" });
+export const ask = (question) =>
+  req("/api/ask", { method: "POST", body: JSON.stringify({ question }) });
