@@ -94,3 +94,5 @@ h2 { font-size: 16px; margin: 0; }
   .map-inner { height: 260px; }
 }
 @media (prefers-reduced-motion: reduce) { .spin, .chev { animation: none; transition: none; } }
+/* darken OSM tiles to match the dark UI (only the map image, not the pins) */
+.map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); }
