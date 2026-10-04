@@ -29,7 +29,7 @@ export function statusOf(bundle, mode, now) {
   if (!bundle) return null;
   const at = fmtClock(bundle.as_of);
   if (mode === "replay")
-    return { kind: "replay", label: "Replay", text: `Recorded check from ${at}. Not live.` };
+    return { kind: "replay", label: "Past check", text: `Saved check from ${at}. Not live.` };
   const age = bundleAgeSecs(bundle.as_of, now);
   if (!bundle.feed_usable || bundle.feed?.error)
     return { kind: "bad", label: "Feed unavailable",

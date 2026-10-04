@@ -142,3 +142,32 @@ button, input { font: inherit; color: inherit; }
 .leaflet-tooltip { font-family: var(--font); font-size: 13px; }
 .route { scroll-margin-top: 16px; }
 @media (max-width: 640px) { .mapcard-map { height: 240px; } }
+
+/* follow-up + past checks */
+.followup, .past { margin-top: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.fu-head, .past-head { padding: 16px 18px 6px; }
+.past-head { display: flex; align-items: baseline; justify-content: space-between; }
+.fu-head h2, .past-head h2 { font-size: 17px; margin: 0; }
+.fu-head p { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+.fu-empty { padding: 14px 18px 18px; color: var(--ink-3); font-size: 14px; }
+.fu-tally { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 18px 14px; padding: 0; font-size: 13px; }
+.fu-tally li { padding: 4px 10px; border-radius: 999px; background: var(--line-2); color: var(--ink-2); }
+.fu-tally li b { color: var(--ink); margin-right: 2px; }
+.fu-tally li.bad { background: var(--bad-bg); color: var(--bad); }
+.fu-tally li.bad b { color: var(--bad); }
+.fu-tally li.warn { background: var(--warn-bg); color: var(--warn); }
+.fu-tally li.ok { background: #e7f4ec; color: var(--ok); }
+.fu-table, .past-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.fu-table th, .past-table th { text-align: left; font-weight: 500; font-size: 12px; color: var(--ink-3); padding: 8px 18px 6px; border-top: 1px solid var(--line-2); }
+.fu-table td, .past-table td { padding: 9px 18px; border-top: 1px solid var(--line-2); vertical-align: top; }
+.fu-table tr.bad td:last-child .state { color: var(--bad); font-weight: 600; }
+.badge.sm { min-width: 40px; font-size: 12px; padding: 2px 6px; }
+.right { text-align: right; }
+.bad-ink { color: var(--bad); font-weight: 600; }
+.past-sample { margin: 0; padding: 12px 18px 16px; font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line-2); }
+.past-sample .link { font-weight: 500; }
+.back { display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; border: 0; background: none; color: var(--accent); font-weight: 600; cursor: pointer; padding: 0; }
+@media (max-width: 640px) {
+  .fu-table th:nth-child(3), .fu-table td:nth-child(3), .fu-table th:nth-child(4), .fu-table td:nth-child(4) { display: none; }
+  .fu-table td, .fu-table th, .past-table td, .past-table th { padding-left: 14px; padding-right: 10px; }
+}
