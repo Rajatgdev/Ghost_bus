@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     nta_api_key_secondary: str = ""
     nta_base_url: str = "https://api.nationaltransport.ie/gtfsr/v2"
 
+    # Jev (TypeSafe System One) — natural-language question layer (additive, optional)
+    jev_api_key: str = ""
+    jev_model: str = "jev-latest"
+
     # cohort-health thresholds (provisional; set from the step-1 probe)
     max_entity_age_secs: int = 120
     max_feed_age_secs: int = 90
