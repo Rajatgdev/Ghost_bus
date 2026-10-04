@@ -1,0 +1,9 @@
+*.DS_Store
+*.env
+*.pyc
+__pycache__/
+.venv/
+probe-report.json
+node_modules/
+dist/
+.vercel/

@@ -1,0 +1,14 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+httpx==0.28.1
+pydantic==2.10.3
+pydantic-settings==2.7.0
+python-dotenv==1.0.1
+# Optional DB layer (only imported when USE_DB=true) — build-plan step 2+
+sqlalchemy==2.0.36
+psycopg[binary]==3.2.3
+asyncpg==0.30.0
+greenlet==3.1.1
+tzdata>=2024.1
+# Protobuf fallback for GTFS-RT (only if ?format=json proves insufficient)
+# gtfs-realtime-bindings==1.0.0
