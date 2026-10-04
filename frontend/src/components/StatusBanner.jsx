@@ -1,58 +1,54 @@
-import { AlertTriangle, CheckCircle2, History, Info } from "lucide-react";
-
-// How old can a live bundle get before we call it stale (seconds).
+// One line of provenance at the top of every view: is this live, stale, abstaining, or replay?
 export const STALE_AFTER_S = 120;
 
-export function bundleAgeSecs(asOf, now = Date.now()) {
-  // as_of comes as 2026-10-04T14:35:00+0100 (no colon in offset) -> normalise for Date()
-  const iso = String(asOf || "").replace(/([+-]\d{2})(\d{2})$/, "$1:$2");
-  const t = Date.parse(iso);
-  return Number.isNaN(t) ? null : Math.max(0, Math.round((now - t) / 1000));
+function parseAsOf(asOf) {
+  // backend sends 2026-10-04T11:56:11+0000 (no colon in offset); Date() wants +00:00
+  const t = Date.parse(String(asOf || "").replace(/([+-]\d{2})(\d{2})$/, "$1:$2"));
+  return Number.isNaN(t) ? null : t;
 }
 
-/** Decide the single most important status for this bundle. Order matters: worst first. */
+export function bundleAgeSecs(asOf, now = Date.now()) {
+  const t = parseAsOf(asOf);
+  return t == null ? null : Math.max(0, Math.round((now - t) / 1000));
+}
+
+/** Clock time in Dublin, whatever timezone the server or browser is in. */
+export function fmtClock(asOf) {
+  const t = parseAsOf(asOf);
+  if (t == null) return "—";
+  return new Date(t).toLocaleTimeString("en-IE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Dublin" });
+}
+
+function fmtAge(s) {
+  if (s < 60) return "just now";
+  if (s < 90) return "1 min ago";
+  return `${Math.round(s / 60)} min ago`;
+}
+
 export function statusOf(bundle, mode, now) {
   if (!bundle) return null;
+  const at = fmtClock(bundle.as_of);
   if (mode === "replay")
-    return { kind: "replay", Icon: History,
-      text: `Replay — a captured cycle from ${fmtTime(bundle.as_of)}. Not live; never counted as live.` };
+    return { kind: "replay", label: "Replay", text: `Recorded check from ${at}. Not live.` };
   const age = bundleAgeSecs(bundle.as_of, now);
   if (!bundle.feed_usable || bundle.feed?.error)
-    return { kind: "bad", Icon: AlertTriangle,
-      text: `Feed unusable this cycle${bundle.feed?.error ? ` (${bundle.feed.error})` : ""} — abstaining, nothing flagged.` };
+    return { kind: "bad", label: "Feed unavailable",
+      text: "The live feed couldn't be used this check, so nothing is flagged." };
   if (age != null && age > STALE_AFTER_S)
-    return { kind: "warn", Icon: AlertTriangle,
-      text: `Stale — last cycle was ${fmtAge(age)} ago. Results may not reflect the network now.` };
+    return { kind: "warn", label: "Out of date", text: `Last checked at ${at} (${fmtAge(age)}). Run again for current data.` };
   if (!bundle.cohort_health?.healthy)
-    return { kind: "warn", Icon: AlertTriangle,
-      text: `Cohort ${bundle.cohort_health?.state || "unhealthy"} — too few vehicles matched to judge absence. Abstaining.` };
-  return { kind: "ok", Icon: CheckCircle2,
-    text: `Live · cohort healthy · updated ${age == null ? "just now" : `${fmtAge(age)} ago`}` };
+    return { kind: "warn", label: "Not enough data",
+      text: "Too few buses are reporting to judge which are missing, so nothing is flagged." };
+  return { kind: "ok", label: "Live", text: `Checked at ${at} · ${age == null ? "just now" : fmtAge(age)}` };
 }
 
 export default function StatusBanner({ bundle, mode, now }) {
   const s = statusOf(bundle, mode, now);
   if (!s) return null;
   return (
-    <>
-      <div className={`status ${s.kind}`} role="status" aria-live="polite">
-        <s.Icon size={16} aria-hidden="true" />
-        <span>{s.text}</span>
-      </div>
-      {bundle.preview && (
-        <div className="status note">
-          <Info size={16} aria-hidden="true" />
-          <span>Preview: the scheduled trip list is sample data until the timetable import lands. Feed checks are real.</span>
-        </div>
-      )}
-    </>
+    <div className={`provenance ${s.kind}`} role="status" aria-live="polite">
+      <span className="pill">{s.kind === "ok" && <i className="pulse" aria-hidden="true" />}{s.label}</span>
+      <span>{s.text}</span>
+    </div>
   );
-}
-
-export function fmtTime(asOf) {
-  const m = String(asOf || "").match(/T(\d{2}:\d{2})/);
-  return m ? m[1] : asOf;
-}
-function fmtAge(s) {
-  return s < 90 ? `${s}s` : `${Math.round(s / 60)} min`;
 }
