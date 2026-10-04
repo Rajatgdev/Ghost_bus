@@ -21,7 +21,8 @@ def effective_due(inst: ExpectedInstance, predicted_due_secs: int | None) -> int
 
 def assess(inst: ExpectedInstance, *, cohort_healthy: bool, now_secs: int,
            schedule_relationship: str | None, matched_vehicle: bool,
-           predicted_due_secs: int | None, has_fresh_prediction: bool) -> CallAssessment:
+           predicted_due_secs: int | None, has_fresh_prediction: bool,
+           grace_secs: int = 0) -> CallAssessment:
     """Return the per-cycle assessment for one expected instance.
 
     `now_secs` is service-day seconds. `schedule_relationship` is the trip-level value from a
@@ -51,14 +52,14 @@ def assess(inst: ExpectedInstance, *, cohort_healthy: bool, now_secs: int,
     if has_fresh_prediction and now_secs < eff:
         return CallAssessment(instance=inst, assessment=Assessment.predicted_delayed,
                               effective_due_secs=eff, predicted_due_secs=predicted_due_secs)
-
-    # 5. start / window
+    
+    # 5. start / window (+ grace: a bus often logs on a few minutes late)
     if now_secs < inst.effective_start_secs:
         return CallAssessment(instance=inst, assessment=Assessment.watch,
                               effective_due_secs=eff, reason_code="not_started")
-    if now_secs <= eff:
+    if now_secs <= eff + grace_secs:
         return CallAssessment(instance=inst, assessment=Assessment.watch,
-                              effective_due_secs=eff, reason_code="window_open")
+                              effective_due_secs=eff, reason_code="within_grace")
 
     # 6. qualified absence (cause unknown — Axis B)
     return CallAssessment(instance=inst, assessment=Assessment.unmatched,

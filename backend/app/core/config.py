@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     min_abs_floor: int = 20
     coldstart_n: int = 3
 
+    # detector: hold a due trip as `watch` until now > due + this, so a bus that logs
+    # its tracker on a few minutes late isn't flagged as a ghost (false-positive guard).
+    unmatched_grace_secs: int = 180   # 3 min
+
     # cors
     allowed_origins: str = "http://localhost:5173"
 

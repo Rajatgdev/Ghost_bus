@@ -84,6 +84,7 @@ def assess_cycle(instances: list[ExpectedInstance],
             matched_vehicle=inst.trip_id in matched_trip_ids,
             predicted_due_secs=pred.predicted_due_secs if pred else None,
             has_fresh_prediction=bool(pred and pred.predicted_due_secs is not None),
+            grace_secs=settings.unmatched_grace_secs,
         ))
 
     counts: dict[str, int] = {a.value: 0 for a in Assessment}
