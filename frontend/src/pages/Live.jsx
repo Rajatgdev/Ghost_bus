@@ -6,27 +6,11 @@ import StatusBanner, { fmtClock } from "../components/StatusBanner.jsx";
 import FlaggedMap from "../components/FlaggedMap.jsx";
 import FollowUp from "../components/FollowUp.jsx";
 import PastChecks from "../components/PastChecks.jsx";
+import TripTable from "../components/TripTable.jsx";
+import AskBox from "../components/AskBox.jsx";
 import { loadChecks, saveCheck, clearChecks, loadLog, appendLog, clearLog } from "../lib/history.js";
 
-// Wording rule: we report what the feed shows, never why. "No vehicle reporting", not "cancelled".
-const TRIP = {
-  unmatched: { text: "No vehicle reporting", cls: "bad", Icon: Diamond },
-  vehicle_observed: { text: "Vehicle reporting", cls: "ok", Icon: CircleCheck },
-  predicted_delayed: { text: "Running late (predicted)", cls: "warn", Icon: Clock3 },
-  watch: { text: "Not yet due", cls: "mute", Icon: Clock3 },
-  explicit_cancelled: { text: "Cancelled by operator", cls: "mute", Icon: Ban },
-  data_unusable: { text: "Not assessed", cls: "warn", Icon: TriangleAlert },
-  excluded_unsupported: { text: "Not covered", cls: "mute", Icon: Ban },
-};
-const WHY = {
-  due_no_vehicle: "Past due · no cancellation sent · cause unknown",
-  window_open: "Inside its due window. Waiting before flagging.",
-  not_started: "Hasn't reached its first departure yet.",
-  cohort_unhealthy: "Too few buses reporting to judge.",
-  unsupported_kind: "Frequency-based or added trip, outside what this check covers.",
-};
 const REFRESH_MS = 60_000;
-const hhmm = (s) => (s == null ? "—" : `${String(Math.floor(s / 3600) % 24).padStart(2, "0")}:${String(Math.floor((s % 3600) / 60)).padStart(2, "0")}`);
 const byRoute = (a, b) => a.localeCompare(b, "en", { numeric: true });
 
 function groupRoutes(assessments) {
@@ -209,6 +193,8 @@ export default function Live() {
               )}
             </section>
 
+            {mode === "live" && <AskBox />}
+
             {healthy && <FlaggedMap assessments={bundle.assessments || []} onPick={pick} />}
 
             {mode === "live" && <FollowUp log={log} />}
@@ -245,27 +231,7 @@ export default function Live() {
                             <ChevronRight size={16} className="chev" aria-hidden="true" />
                           </button>
                           {isOpen && (
-                            <table className="trips">
-                              <thead><tr><th>Departs</th><th>Due</th><th>Stop</th><th>Status</th></tr></thead>
-                              <tbody>
-                                {g.trips.map((a) => {
-                                  const t = a.reason_code === "within_grace"
-                                    ? { text: "Due, waiting a few minutes before flagging", cls: "mute", Icon: Clock3 }
-                                    : TRIP[a.assessment] || { text: a.assessment, cls: "mute", Icon: Clock3 };
-                                  return (
-                                    <tr key={a.instance.trip_id} className={t.cls}>
-                                      <td className="num">{a.instance.start_time?.slice(0, 5)}</td>
-                                      <td className="num">{hhmm(a.effective_due_secs ?? a.instance.static_due_secs)}</td>
-                                      <td>{a.instance.ref_stop_name || "—"}</td>
-                                      <td>
-                                        <span className={`state ${t.cls}`}><t.Icon size={14} aria-hidden="true" />{t.text}</span>
-                                        {a.assessment === "unmatched" && <span className="why">{WHY[a.reason_code] || WHY.due_no_vehicle}</span>}
-                                      </td>
-                                    </tr>
-                                  );
-                                })}
-                              </tbody>
-                            </table>
+                            <TripTable trips={g.trips} />
                           )}
                         </li>
                       );

@@ -174,3 +174,28 @@ button, input { font: inherit; color: inherit; }
 .fu-note { margin: 0 18px 14px; font-size: 13px; color: var(--ink-2); max-width: 80ch; }
 .fu-table tr.warn td:last-child .state { color: var(--warn); font-weight: 600; }
 .fu-table .why { max-width: 60ch; }
+
+/* ask box */
+.ask { margin-top: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+.ask-form { display: flex; align-items: center; gap: 10px; }
+.ask-label { font-weight: 700; font-size: 15px; }
+.ask-form input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; font-size: 15px; background: var(--bg); }
+.ask-form input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.ask-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.ask-error { margin-top: 12px; color: var(--bad); font-size: 14px; }
+.ask-result { margin-top: 14px; }
+.ask-answer { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.ask-answer p { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; }
+.icon-btn { border: 0; background: none; color: var(--ink-3); cursor: pointer; padding: 2px; border-radius: 6px; }
+.icon-btn:hover { color: var(--ink); background: var(--line-2); }
+.ask-meta { margin: 6px 0 12px; font-size: 13px; color: var(--ink-3); }
+.warn-ink { color: var(--warn); }
+.ask .trips { border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+.trips.with-route th:first-child, .trips.with-route td:first-child { padding-left: 14px; width: 70px; }
+.ask-more { display: inline-block; margin-top: 10px; font-size: 14px; }
+@media (max-width: 640px) {
+  .ask-label { display: none; }
+  .trips.with-route th:nth-child(3), .trips.with-route td:nth-child(3) { display: none; }
+}
