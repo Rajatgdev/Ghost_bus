@@ -7,3 +7,4 @@ probe-report.json
 node_modules/
 dist/
 .vercel/
+backend/gtfs.zip
