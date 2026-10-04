@@ -13,10 +13,10 @@ class Settings(BaseSettings):
 
     # cohort-health thresholds (provisional; set from the step-1 probe)
     max_entity_age_secs: int = 120
-    max_feed_age_secs: int = 120
+    max_feed_age_secs: int = 90
     max_skew_secs: int = 30
     min_observed_fraction: float = 0.30
-    min_abs_floor: int = 3
+    min_abs_floor: int = 20
     coldstart_n: int = 3
 
     # cors
