@@ -1,0 +1,2 @@
+/* App icon in the header, replacing the "GB" text mark. */
+.brand .mark { background: url("/favicon.svg") center / cover no-repeat; color: transparent; font-size: 0; border-radius: 8px; }
