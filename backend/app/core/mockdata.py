@@ -22,23 +22,29 @@ def mock_instances() -> list[ExpectedInstance]:
     return [
         ExpectedInstance(trip_id="T-46A-1", operator_id="dublin_bus", route_short_name="46A",
                          service_date="2026-10-04", start_time="14:20", ref_stop_name="Donnybrook",
+                         ref_stop_lat=53.3216, ref_stop_lon=-6.237,
                          effective_start_secs=_mm(14, 20), static_due_secs=_mm(14, 32)),
         ExpectedInstance(trip_id="T-15-2", operator_id="dublin_bus", route_short_name="15",
                          service_date="2026-10-04", start_time="14:10", ref_stop_name="Rathfarnham",
+                         ref_stop_lat=53.2985, ref_stop_lon=-6.283,
                          effective_start_secs=_mm(14, 10), static_due_secs=_mm(14, 18)),
         ExpectedInstance(trip_id="T-7-3", operator_id="dublin_bus", route_short_name="7",
                          service_date="2026-10-04", start_time="14:05", ref_stop_name="Blackrock",
+                         ref_stop_lat=53.3016, ref_stop_lon=-6.1778,
                          effective_start_secs=_mm(14, 5), static_due_secs=_mm(14, 15)),
         ExpectedInstance(trip_id="T-39-4", operator_id="dublin_bus", route_short_name="39",
                          service_date="2026-10-04", start_time="14:25", ref_stop_name="Ongar",
+                         ref_stop_lat=53.3963, ref_stop_lon=-6.4447,
                          effective_start_secs=_mm(14, 25), static_due_secs=_mm(14, 30)),
         # due, but NO live vehicle -> unmatched
         ExpectedInstance(trip_id="T-145-5", operator_id="dublin_bus", route_short_name="145",
                          service_date="2026-10-04", start_time="14:20", ref_stop_name="Heuston",
+                         ref_stop_lat=53.3464, ref_stop_lon=-6.2925,
                          effective_start_secs=_mm(14, 20), static_due_secs=_mm(14, 33)),
         # starts later -> watch, never unmatched
         ExpectedInstance(trip_id="T-84-6", operator_id="dublin_bus", route_short_name="84",
                          service_date="2026-10-04", start_time="15:50", ref_stop_name="Greystones",
+                         ref_stop_lat=53.144, ref_stop_lon=-6.064,
                          effective_start_secs=_mm(15, 50), static_due_secs=_mm(15, 58)),
     ]
 

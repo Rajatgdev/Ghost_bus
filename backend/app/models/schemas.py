@@ -29,6 +29,8 @@ class ExpectedInstance(BaseModel):
     service_date: str
     start_time: str
     ref_stop_name: str = ""
+    ref_stop_lat: float | None = None   # reference stop location (schedule, not a vehicle)
+    ref_stop_lon: float | None = None
     effective_start_secs: int       # service-day seconds
     static_due_secs: int            # service-day seconds
     supported: bool = True          # False -> excluded_unsupported (freq/NEW/REPLACEMENT/DUPLICATED)
