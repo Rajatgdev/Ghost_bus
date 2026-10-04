@@ -78,8 +78,11 @@ left join stops s  on s.version_id = (select version_id from v) and s.stop_id = 
 
 
 def _now_service_secs() -> int:
-    lt = time.localtime()
-    return lt.tm_hour * 3600 + lt.tm_min * 60 + lt.tm_sec
+    """Service-day seconds in Europe/Dublin (NOT server-local — Railway runs UTC)."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    now = datetime.now(ZoneInfo("Europe/Dublin"))
+    return now.hour * 3600 + now.minute * 60 + now.second
 
 
 async def active_now(now_secs: int | None = None) -> list[ExpectedInstance]:

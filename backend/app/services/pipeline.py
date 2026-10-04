@@ -20,10 +20,11 @@ from app.services import detector, health, nta
 
 
 def _now_service_secs() -> int:
-    """Service-day seconds for 'now' in Europe/Dublin (approximation for the preview;
-    full service-day/DST handling lands with the static import, step 2)."""
-    lt = time.localtime()
-    return lt.tm_hour * 3600 + lt.tm_min * 60 + lt.tm_sec
+    """Service-day seconds in Europe/Dublin (NOT server-local — Railway runs UTC)."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    now = datetime.now(ZoneInfo("Europe/Dublin"))
+    return now.hour * 3600 + now.minute * 60 + now.second
 
 
 def parse_vehicles(body: dict | None) -> list[VehicleObservation]:
