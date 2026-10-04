@@ -69,7 +69,7 @@ ref_call as (
 select at.trip_id, r.route_short_name, at.direction_id,
        at.effective_start_secs,
        coalesce(rc.departure_secs, at.effective_start_secs) as due_secs,
-       s.stop_name
+       s.stop_name, s.stop_lat, s.stop_lon
 from active_trips at
 join routes r  on r.version_id = (select version_id from v) and r.route_id = at.route_id
 left join ref_call rc on rc.trip_id = at.trip_id
@@ -104,6 +104,8 @@ async def active_now(now_secs: int | None = None) -> list[ExpectedInstance]:
                 service_date=today,
                 start_time=f"{hh:02d}:{mm:02d}",
                 ref_stop_name=m["stop_name"] or "",
+                ref_stop_lat=m["stop_lat"],
+                ref_stop_lon=m["stop_lon"],
                 effective_start_secs=start,
                 static_due_secs=due,
                 supported=True,

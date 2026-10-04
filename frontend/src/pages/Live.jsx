@@ -3,6 +3,7 @@ import { RefreshCw, Search, ChevronRight, CircleCheck, Diamond, Clock3, Triangle
 import { runCycle } from "../lib/api";
 import replayFixture from "../fixtures/replay.json";
 import StatusBanner, { fmtClock } from "../components/StatusBanner.jsx";
+import FlaggedMap from "../components/FlaggedMap.jsx";
 
 // Wording rule: we report what the feed shows, never why. "No vehicle reporting", not "cancelled".
 const TRIP = {
@@ -100,6 +101,11 @@ export default function Live() {
   const shown = routes.filter((g) =>
     (!problemsOnly || g.unmatched) && (!q.trim() || g.route.toLowerCase().startsWith(q.trim().toLowerCase())));
 
+  const pick = (r) => {
+    setQ(""); setProblemsOnly(false);
+    setOpen((s) => new Set(s).add(r));
+    setTimeout(() => document.getElementById(`route-${r}`)?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  };
   const toggle = (r) => setOpen((s) => { const n = new Set(s); n.has(r) ? n.delete(r) : n.add(r); return n; });
 
   return (
@@ -169,7 +175,7 @@ export default function Live() {
               <dl className="stats">
                 <div><dt>Routes affected</dt><dd>{healthy ? problemRoutes : "—"}</dd></div>
                 <div><dt>Vehicle reporting</dt><dd>{reporting}</dd></div>
-                <div><dt>Not yet due</dt><dd>{c.watch || 0}</dd></div>
+                <div><dt>Not yet due / waiting</dt><dd>{c.watch || 0}</dd></div>
                 <div><dt>Not covered</dt><dd>{notCovered}</dd></div>
               </dl>
               {bundle.feed && (
@@ -179,6 +185,8 @@ export default function Live() {
                 </p>
               )}
             </section>
+
+            {healthy && <FlaggedMap assessments={bundle.assessments || []} onPick={pick} />}
 
             {healthy && (
               <section className="board" aria-label="Routes">
@@ -204,7 +212,7 @@ export default function Live() {
                       const s = routeStatus(g);
                       const isOpen = open.has(g.route);
                       return (
-                        <li key={g.route} className={`route ${s.cls} ${isOpen ? "open" : ""}`}>
+                        <li key={g.route} id={`route-${g.route}`} className={`route ${s.cls} ${isOpen ? "open" : ""}`}>
                           <button className="route-row" aria-expanded={isOpen} onClick={() => toggle(g.route)}>
                             <span className="badge">{g.route}</span>
                             <span className={`state ${s.cls}`}><s.Icon size={15} aria-hidden="true" />{s.text}</span>
@@ -216,7 +224,9 @@ export default function Live() {
                               <thead><tr><th>Departs</th><th>Due</th><th>Stop</th><th>Status</th></tr></thead>
                               <tbody>
                                 {g.trips.map((a) => {
-                                  const t = TRIP[a.assessment] || { text: a.assessment, cls: "mute", Icon: Clock3 };
+                                  const t = a.reason_code === "within_grace"
+                                    ? { text: "Due, waiting a few minutes before flagging", cls: "mute", Icon: Clock3 }
+                                    : TRIP[a.assessment] || { text: a.assessment, cls: "mute", Icon: Clock3 };
                                   return (
                                     <tr key={a.instance.trip_id} className={t.cls}>
                                       <td className="num">{a.instance.start_time?.slice(0, 5)}</td>
