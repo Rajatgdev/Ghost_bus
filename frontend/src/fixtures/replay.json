@@ -1,0 +1,155 @@
+{
+ "as_of": "2026-10-04T14:35:00+0100",
+ "now_service_secs": 52500,
+ "cohort_health": {
+  "operator_id": "all",
+  "state": "cohort_healthy",
+  "expected": 6,
+  "matched": 4,
+  "healthy": true,
+  "reason": ""
+ },
+ "counts": {
+  "data_unusable": 0,
+  "explicit_cancelled": 0,
+  "explicit_deleted": 0,
+  "vehicle_observed": 4,
+  "predicted_delayed": 0,
+  "watch": 1,
+  "unmatched": 1,
+  "excluded_unsupported": 0
+ },
+ "assessments": [
+  {
+   "instance": {
+    "trip_id": "T-46A-1",
+    "operator_id": "dublin_bus",
+    "route_short_name": "46A",
+    "service_date": "2026-10-04",
+    "start_time": "14:20",
+    "ref_stop_name": "Donnybrook",
+    "ref_stop_lat": 53.3216,
+    "ref_stop_lon": -6.237,
+    "effective_start_secs": 51600,
+    "static_due_secs": 52320,
+    "supported": true
+   },
+   "assessment": "vehicle_observed",
+   "effective_due_secs": 52320,
+   "predicted_due_secs": null,
+   "evidence_level": "observed",
+   "reason_code": ""
+  },
+  {
+   "instance": {
+    "trip_id": "T-15-2",
+    "operator_id": "dublin_bus",
+    "route_short_name": "15",
+    "service_date": "2026-10-04",
+    "start_time": "14:10",
+    "ref_stop_name": "Rathfarnham",
+    "ref_stop_lat": 53.2985,
+    "ref_stop_lon": -6.283,
+    "effective_start_secs": 51000,
+    "static_due_secs": 51480,
+    "supported": true
+   },
+   "assessment": "vehicle_observed",
+   "effective_due_secs": 51480,
+   "predicted_due_secs": null,
+   "evidence_level": "observed",
+   "reason_code": ""
+  },
+  {
+   "instance": {
+    "trip_id": "T-7-3",
+    "operator_id": "dublin_bus",
+    "route_short_name": "7",
+    "service_date": "2026-10-04",
+    "start_time": "14:05",
+    "ref_stop_name": "Blackrock",
+    "ref_stop_lat": 53.3016,
+    "ref_stop_lon": -6.1778,
+    "effective_start_secs": 50700,
+    "static_due_secs": 51300,
+    "supported": true
+   },
+   "assessment": "vehicle_observed",
+   "effective_due_secs": 51300,
+   "predicted_due_secs": null,
+   "evidence_level": "observed",
+   "reason_code": ""
+  },
+  {
+   "instance": {
+    "trip_id": "T-39-4",
+    "operator_id": "dublin_bus",
+    "route_short_name": "39",
+    "service_date": "2026-10-04",
+    "start_time": "14:25",
+    "ref_stop_name": "Ongar",
+    "ref_stop_lat": 53.3963,
+    "ref_stop_lon": -6.4447,
+    "effective_start_secs": 51900,
+    "static_due_secs": 52200,
+    "supported": true
+   },
+   "assessment": "vehicle_observed",
+   "effective_due_secs": 52200,
+   "predicted_due_secs": null,
+   "evidence_level": "observed",
+   "reason_code": ""
+  },
+  {
+   "instance": {
+    "trip_id": "T-145-5",
+    "operator_id": "dublin_bus",
+    "route_short_name": "145",
+    "service_date": "2026-10-04",
+    "start_time": "14:20",
+    "ref_stop_name": "Heuston",
+    "ref_stop_lat": 53.3464,
+    "ref_stop_lon": -6.2925,
+    "effective_start_secs": 51600,
+    "static_due_secs": 52380,
+    "supported": true
+   },
+   "assessment": "unmatched",
+   "effective_due_secs": 52380,
+   "predicted_due_secs": null,
+   "evidence_level": "observed",
+   "reason_code": "due_no_vehicle"
+  },
+  {
+   "instance": {
+    "trip_id": "T-84-6",
+    "operator_id": "dublin_bus",
+    "route_short_name": "84",
+    "service_date": "2026-10-04",
+    "start_time": "15:50",
+    "ref_stop_name": "Greystones",
+    "ref_stop_lat": 53.144,
+    "ref_stop_lon": -6.064,
+    "effective_start_secs": 57000,
+    "static_due_secs": 57480,
+    "supported": true
+   },
+   "assessment": "watch",
+   "effective_due_secs": 57480,
+   "predicted_due_secs": null,
+   "evidence_level": "observed",
+   "reason_code": "not_started"
+  }
+ ],
+ "feed_usable": true,
+ "preview": true,
+ "feed": {
+  "vehicles_status": 200,
+  "trip_updates_status": 200,
+  "incrementality": "FULL_DATASET",
+  "skew_s": 0,
+  "vehicles_entities": 4,
+  "trip_updates_entities": 0,
+  "error": null
+ }
+}
