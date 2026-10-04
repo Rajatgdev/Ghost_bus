@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { RefreshCw, Search, ChevronRight, CircleCheck, Diamond, Clock3, TriangleAlert, Ban } from "lucide-react";
+import { ArrowLeft, RefreshCw, Search, ChevronRight, CircleCheck, Diamond, Clock3, TriangleAlert, Ban } from "lucide-react";
 import { runCycle } from "../lib/api";
 import replayFixture from "../fixtures/replay.json";
 import StatusBanner, { fmtClock } from "../components/StatusBanner.jsx";
 import FlaggedMap from "../components/FlaggedMap.jsx";
+import FollowUp from "../components/FollowUp.jsx";
+import PastChecks from "../components/PastChecks.jsx";
+import { loadChecks, saveCheck, clearChecks } from "../lib/history.js";
 
 // Wording rule: we report what the feed shows, never why. "No vehicle reporting", not "cancelled".
 const TRIP = {
@@ -54,23 +57,29 @@ function routeStatus(g) {
 }
 
 export default function Live() {
-  const [mode, setMode] = useState(new URLSearchParams(location.search).has("replay") ? "replay" : "live");
+  const [mode, setMode] = useState(new URLSearchParams(location.search).has("replay") ? "past" : "live");
+  const [checks, setChecks] = useState(loadChecks);
+  const [pastSel, setPastSel] = useState(null); // null = list, "sample", or a saved check's as_of
   const [liveBundle, setLiveBundle] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [auto, setAuto] = useState(false);
+  const [auto, setAuto] = useState(true);
   const [now, setNow] = useState(Date.now());
   const [open, setOpen] = useState(() => new Set());
   const [q, setQ] = useState("");
   const [problemsOnly, setProblemsOnly] = useState(false);
 
-  const bundle = mode === "replay" ? replayFixture : liveBundle;
+  const bundle = mode === "live" ? liveBundle
+    : pastSel === "sample" ? replayFixture
+    : checks.find((c) => c.as_of === pastSel) || null;
 
   async function run() {
     setLoading(true);
     setError("");
     try {
-      setLiveBundle(await runCycle());
+      const res = await runCycle();
+      setLiveBundle(res);
+      setChecks((l) => saveCheck(l, res));
       setNow(Date.now());
     } catch (e) {
       setError(e.message || "failed");
@@ -118,7 +127,9 @@ export default function Live() {
           </div>
           <div className="seg" role="tablist" aria-label="Data source">
             <button role="tab" aria-selected={mode === "live"} onClick={() => setMode("live")}>Live</button>
-            <button role="tab" aria-selected={mode === "replay"} onClick={() => setMode("replay")}>Replay</button>
+            <button role="tab" aria-selected={mode === "past"} onClick={() => { setMode("past"); setPastSel(null); }}>
+              Past checks{checks.length ? ` (${checks.length})` : ""}
+            </button>
           </div>
         </div>
       </header>
@@ -133,8 +144,18 @@ export default function Live() {
           </p>
         </section>
 
+        {mode === "past" && !pastSel && (
+          <PastChecks checks={checks}
+            onOpen={(id) => setPastSel(id)}
+            onOpenSample={() => setPastSel("sample")}
+            onClear={() => { if (confirm("Clear all past checks saved in this browser?")) setChecks(clearChecks()); }} />
+        )}
+        {mode === "past" && pastSel && (
+          <button className="back" onClick={() => setPastSel(null)}><ArrowLeft size={15} aria-hidden="true" /> All past checks</button>
+        )}
+
         <div className="toolbar">
-          <StatusBanner bundle={bundle} mode={mode} now={now} />
+          <StatusBanner bundle={bundle} mode={mode === "live" ? "live" : "replay"} now={now} />
           {mode === "live" && (
             <div className="actions">
               <label className="check">
@@ -152,7 +173,7 @@ export default function Live() {
         {error && mode === "live" && (
           <div className="notice bad" role="alert">
             <TriangleAlert size={16} aria-hidden="true" />
-            <span>Couldn't reach the service ({error}). <button className="link" onClick={() => setMode("replay")}>View the recorded check</button></span>
+            <span>Couldn't reach the service ({error}). <button className="link" onClick={() => { setMode("past"); setPastSel(null); }}>View past checks</button></span>
           </div>
         )}
         {bundle?.preview && (
@@ -187,6 +208,8 @@ export default function Live() {
             </section>
 
             {healthy && <FlaggedMap assessments={bundle.assessments || []} onPick={pick} />}
+
+            {mode === "live" && <FollowUp checks={checks} />}
 
             {healthy && (
               <section className="board" aria-label="Routes">
