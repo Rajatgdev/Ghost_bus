@@ -26,9 +26,16 @@ async def cohorts():
 
 @router.post("/cycle")
 async def cycle():
-    """Run one live decision cycle. Requires NTA_API_KEY on the server."""
     if not settings.nta_api_key:
         raise HTTPException(400, "NTA_API_KEY is not set on the server.")
-    bundle = await pipeline.run_live_cycle(mock_instances())
-    bundle["preview"] = True   # expected instances are mocked (step 2 makes them real)
+    preview = True
+    if settings.use_db:
+        from app.services import instances
+        expected = await instances.active_now()
+        preview = False
+    else:
+        expected = mock_instances()
+    bundle = await pipeline.run_live_cycle(expected)
+    bundle["preview"] = preview
+    bundle["expected_count"] = len(expected)
     return bundle
